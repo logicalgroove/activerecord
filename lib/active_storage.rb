@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #--
 # Copyright (c) 2017 David Heinemeier Hansson
 #
@@ -22,13 +24,21 @@
 #++
 
 require "active_record"
-require "active_storage/engine"
+require "active_support"
+require "active_support/rails"
+require "active_storage/version"
 
 module ActiveStorage
   extend ActiveSupport::Autoload
 
   autoload :Attached
   autoload :Service
+  autoload :Previewer
+  autoload :Analyzer
 
+  mattr_accessor :logger
   mattr_accessor :verifier
+  mattr_accessor :queue
+  mattr_accessor :previewers, default: []
+  mattr_accessor :analyzers, default: []
 end

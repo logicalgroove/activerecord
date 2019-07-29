@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require "test_helper"
 require "database/setup"
 
-if SERVICE_CONFIGURATIONS[:s3]
+if SERVICE_CONFIGURATIONS[:s3] && SERVICE_CONFIGURATIONS[:s3][:access_key_id].present?
   class ActiveStorage::S3DirectUploadsControllerTest < ActionDispatch::IntegrationTest
     setup do
       @old_service = ActiveStorage::Blob.service
@@ -24,7 +26,8 @@ if SERVICE_CONFIGURATIONS[:s3]
         assert_equal 6, details["byte_size"]
         assert_equal checksum, details["checksum"]
         assert_equal "text/plain", details["content_type"]
-        assert_match /#{SERVICE_CONFIGURATIONS[:s3][:bucket]}\.s3.(\S+)?amazonaws\.com/, details["direct_upload"]["url"]
+        assert_match SERVICE_CONFIGURATIONS[:s3][:bucket], details["direct_upload"]["url"]
+        assert_match(/s3\.(\S+)?amazonaws\.com/, details["direct_upload"]["url"])
         assert_equal({ "Content-Type" => "text/plain", "Content-MD5" => checksum }, details["direct_upload"]["headers"])
       end
     end
@@ -68,7 +71,7 @@ else
 end
 
 if SERVICE_CONFIGURATIONS[:azure]
-  class ActiveStorage::AzureDirectUploadsControllerTest < ActionDispatch::IntegrationTest
+  class ActiveStorage::AzureStorageDirectUploadsControllerTest < ActionDispatch::IntegrationTest
     setup do
       @config = SERVICE_CONFIGURATIONS[:azure]
 
@@ -98,7 +101,7 @@ if SERVICE_CONFIGURATIONS[:azure]
     end
   end
 else
-  puts "Skipping Azure Direct Upload tests because no Azure configuration was supplied"
+  puts "Skipping Azure Storage Direct Upload tests because no Azure Storage configuration was supplied"
 end
 
 class ActiveStorage::DiskDirectUploadsControllerTest < ActionDispatch::IntegrationTest
@@ -114,7 +117,7 @@ class ActiveStorage::DiskDirectUploadsControllerTest < ActionDispatch::Integrati
       assert_equal 6, details["byte_size"]
       assert_equal checksum, details["checksum"]
       assert_equal "text/plain", details["content_type"]
-      assert_match /rails\/active_storage\/disk/, details["direct_upload"]["url"]
+      assert_match(/rails\/active_storage\/disk/, details["direct_upload"]["url"])
       assert_equal({ "Content-Type" => "text/plain" }, details["direct_upload"]["headers"])
     end
   end

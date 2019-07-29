@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 require "database/setup"
 
@@ -39,9 +41,24 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
     end
   end
 
+  test "purge deletes file from external service" do
+    blob = create_blob
+
+    blob.purge
+    assert_not ActiveStorage::Blob.service.exist?(blob.key)
+  end
+
+  test "purge deletes variants from external service" do
+    blob = create_file_blob
+    variant = blob.variant(resize: "100>").processed
+
+    blob.purge
+    assert_not ActiveStorage::Blob.service.exist?(variant.key)
+  end
+
   private
     def expected_url_for(blob, disposition: :inline)
-      query_string = { content_type: blob.content_type, disposition: disposition }.to_param
+      query_string = { content_type: blob.content_type, disposition: "#{disposition}; #{blob.filename.parameters}" }.to_param
       "/rails/active_storage/disk/#{ActiveStorage.verifier.generate(blob.key, expires_in: 5.minutes, purpose: :blob_key)}/#{blob.filename}?#{query_string}"
     end
 end
