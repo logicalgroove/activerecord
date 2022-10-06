@@ -76,8 +76,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.1)
-      public_suffix (~> 2.0, >= 2.0.2)
+    addressable (2.8.1)
+      public_suffix (>= 2.0.2, < 6.0)
     arel (8.0.0)
     ast (2.3.0)
     aws-sdk (2.10.7)
@@ -163,7 +163,7 @@ GEM
     parser (2.4.0.0)
       ast (~> 2.2)
     powerpack (0.1.1)
-    public_suffix (2.0.5)
+    public_suffix (3.1.1)
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
